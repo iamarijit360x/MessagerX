@@ -8,6 +8,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Chat from './Pages/Chat';
 import SignIn from './Pages/SignIn';
 import Dashboard from './Pages/Dashboard';
+import Navbar from './Components/Navbar';
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -73,6 +74,7 @@ export default function ToggleColorMode() {
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <MyApp />
+        <Navbar/>
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<SignIn />} />

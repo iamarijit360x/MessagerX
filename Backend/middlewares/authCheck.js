@@ -10,7 +10,6 @@ exports.authCheck=function (req,res,next){
         const verified=jwt.verify(token,process.env.SECRET)
         const decoded=jwt.verify(token,process.env.SECRET)
         req.user=decoded
-        console.log(req.user)
         
         next()
     }

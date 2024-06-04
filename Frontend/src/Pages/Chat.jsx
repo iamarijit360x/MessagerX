@@ -29,7 +29,11 @@ const Chat = () => {
     const [selectedContact,setSelectedContact]=useState()
     const [selectedContactUsername,setSelectedContactUsername]=useState("")
     const [username,setUsername]=useState('')
+    const [chatBox,setOpenChatBox]=useState(false)
 
+    useEffect(()=>{
+        
+    },[])
     useEffect(()=>{
         setLoading(true)
         axios.get(import.meta.env.VITE_BACKEND_URL+'/getcontacts',{headers:{'Authorization':localStorage.getItem("token")}})
@@ -83,6 +87,7 @@ const Chat = () => {
 
     const  handleSelectContacts=(index)=>{
         setSelectedContact(index)
+        setOpenChatBox(true)
         setSelectedContactUsername(contacts[index].username)
         console.log(messagesObj)
     }
@@ -90,33 +95,47 @@ const Chat = () => {
 
 
     return (
-        <Container maxWidth="" sx={{display:"flex",justifyContent:"center",gap:"2rem"}}>
+        <Container maxWidth="80vw" sx={{display:"flex",justifyContent:"center",gap:"2%",marginLeft:"10%"}}>
           
-            <Paper elevation={3} sx={{ padding: 2,minWidth:"40%" }}>
+           {!chatBox&& <Paper elevation={3} sx={{ padding:"2rem",minWidth:"20%",minHeight:"80vh",marginLeft:"2%"}}>
                 <Box display="flex" flexDirection="column" gap={2}>
                     {!loading && contacts.map((item,index)=>(
                         <ListItem onClick={()=>handleSelectContacts(index)} key={index} sx={{border:"1px solid",backgroundColor:index===selectedContact?"red":"yellow"}}>{item.name}{item.username}</ListItem>
                     ))}
 
                 </Box>
-            </Paper>
+            </Paper>}
            
-            <Paper elevation={3} sx={{ padding: 2,minWidth:"50%" }}>
-                Messages
-                <List >
-                    {(messagesObj[selectedContactUsername] || []).map((msg, index) => (
-                        <ListItem key={index}>
-                            <ListItemText
-                                primary={`${msg.user}: ${msg.content}`}
-                                secondary={new Date(msg.timestamp).toLocaleString()}
-                                sx={{textAlign:username===msg.user?"start":"end"}}
-                                 />
-                        </ListItem>
-                    ))}
-                    <InputBase value={message} onChange={(event)=>setMessage(event.target.value)}></InputBase>
-                    <Button onClick={()=>handleSendMessage()}>Send</Button>
-                </List>
-            </Paper>
+            {chatBox && 
+            <Paper elevation={3} sx={{ minHeight:"85vh", maxHeight:"88vh", padding:"2%", maxWidth:"90%", minWidth:"90%", display:"flex", flexDirection:"column",gap:"2%" }}>
+            <Typography sx={{ borderBottom:"1px solid black" }}>{contacts[selectedContact].name}</Typography>
+            <Box sx={{ overflow: 'auto', flexGrow: 1,display:"flex",flexDirection:"column" }}> 
+                {(messagesObj[selectedContactUsername] || []).map((msg, index) => (
+                    <Paper
+                        key={index}
+                        sx={{
+                            display:"flex",
+                            maxWidth:"70%",
+                            padding:"1%",
+                            backgroundColor: msg.user === username ? "lightgreen" : "lightblue", // Adjusted background color conditionally
+                            alignSelf: msg.user === username ? "start" : "end", // Adjusted textAlign,
+                            marginY:"1%"
+                        }}
+                    >
+                        <Typography sx={{textWrap:"pretty"}}>{msg.content}</Typography>
+                        {/**<Typography variant='overline'>{new Date(msg.timestamp).toLocaleString()}</Typography>**/}
+                    </Paper>
+                ))}
+            </Box>
+            <Box sx={{ minWidth: '90%', border: '1px solid black', borderRadius: '10px', boxShadow: 2, position: 'relative' }}>
+                <InputBase placeholder='Send a Message' sx={{minWidth:"96%",overflow:"hidden",maxHeight:"4rem", paddingX:"1rem" }} value={message} onChange={(event) => setMessage(event.target.value)} />
+                <Button sx={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }} onClick={handleSendMessage}>Send</Button>
+            </Box>
+        </Paper>
+        
+        
+        
+        }
         </Container>
     );
 };

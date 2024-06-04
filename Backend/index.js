@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { authCheck, authenticateUser } = require('./middlewares/authCheck');
 const routes = require('./routes/routes');
+const { Cipher } = require('crypto');
 
 const app = express();
 const server = http.createServer(app);
@@ -28,7 +29,9 @@ const io = require("socket.io")(server, {
         methods: ["GET", "POST"]
     }
 });
-const users={}
+//const users={}
+const users=new Map()
+
 // Socket.IO event handling
 io.use((socket, next) => {
     const token = socket.handshake.auth.token;
@@ -36,8 +39,11 @@ io.use((socket, next) => {
         try {
             const verified = jwt.verify(token, process.env.SECRET);
             const email=jwt.decode(token,process.env.SECRET)
-            users[email.username]=socket.id
-                console.log(`User connected: ${socket.id}`);
+            socket.username=email.username
+            //users[email.username]=socket.id
+            users.set(email.username,socket.id)
+            console.log(users)
+            console.log(`User connected: ${socket.id}`);
 
             next();
         } catch (error) {
@@ -51,11 +57,14 @@ io.use((socket, next) => {
 io.on('connection', (socket) => {
     socket.on('sendMessage', (recipientId, msg) => {
 
-        io.to(users[recipientId]).emit('sendMessage', msg);
+        io.to(users.get(recipientId)).emit('sendMessage', msg);
     });
 
     socket.on('disconnect', () => {
         console.log(`User disconnected: ${socket.id}`);
+        users.delete(socket.username)
+        console.log(users)
+
     });
 });
 
