@@ -1,6 +1,8 @@
 const express = require('express');
 const User=require('../models/UserModel')
 const jwt=require('jsonwebtoken')
+
+
 exports.addtocontacts= async (req,res)=>{
     const {username,name}=req.body;
     const user=await User.findOne({username:username})
@@ -11,7 +13,7 @@ exports.addtocontacts= async (req,res)=>{
     if (!currentUser) {
         return res.status(404).json({ success: false, message: 'Current user not found' });
     }
-
+    
     const contact = { username: username, name: name };
     currentUser.contacts.push(contact);
     await currentUser.save();

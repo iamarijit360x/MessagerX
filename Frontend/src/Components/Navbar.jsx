@@ -4,6 +4,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { styled } from '@mui/material/styles'; // Import styled function
+import AddCommentIcon from '@mui/icons-material/AddComment';
 
 
 const StyledDrawer = styled(Drawer)({
@@ -19,7 +20,7 @@ const Navbar = () => {
     <StyledDrawer variant="permanent" anchor="left">
       <StyledList>
         <ListItem >
-          <ListItemText primary="1" />
+          <AddCommentIcon/>
         </ListItem>
         <ListItem >
           <ListItemText primary="2" />

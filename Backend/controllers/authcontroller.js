@@ -15,3 +15,14 @@ exports.signin= async (req,res)=>{
     const token=jwt.sign({_id:user.id,username:user.username},process.env.SECRET)
     res.status(200).json({token,success:true})
 }
+exports.signup= async (req,res)=>{
+    const {username,password}=req.body;
+    const user=await User.findOne({username:username})
+    if(user)
+        return res.status(403).json({message:"User Already Exists"})
+    
+    const newUser=new User({username:username,password:password})
+    await newUser.save()
+    res.status(200).json({message:"Account Created Successfully"})
+}
+

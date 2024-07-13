@@ -73,9 +73,7 @@ export default function ToggleColorMode() {
   return (
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
-        <MyApp />
-        <Navbar/>
-        <BrowserRouter>
+           <BrowserRouter>
           <Routes>
             <Route path='/' element={<SignIn />} />
             <Route path='/dashboard' element={<Chat />} />

@@ -8,7 +8,7 @@ const cors = require('cors');
 const { authCheck, authenticateUser } = require('./middlewares/authCheck');
 const routes = require('./routes/routes');
 const { Cipher } = require('crypto');
-
+const User=require('./models/UserModel')
 const app = express();
 const server = http.createServer(app);
 require('dotenv').config();
@@ -33,7 +33,7 @@ const io = require("socket.io")(server, {
 const users=new Map()
 
 // Socket.IO event handling
-io.use((socket, next) => {
+io.use(async (socket, next) => {
     const token = socket.handshake.auth.token;
     if (token) {
         try {
@@ -42,9 +42,7 @@ io.use((socket, next) => {
             socket.username=email.username
             //users[email.username]=socket.id
             users.set(email.username,socket.id)
-            console.log(users)
-            console.log(`User connected: ${socket.id}`);
-
+            
             next();
         } catch (error) {
             next(new Error('Authentication error'));
@@ -54,16 +52,42 @@ io.use((socket, next) => {
     }
 });
 
-io.on('connection', (socket) => {
-    socket.on('sendMessage', (recipientId, msg) => {
+io.on('connection', async (socket) => {
+          try {
+            const user=await User.findOne({username:socket.username})
+    
+            if( user.temporaryMessages.length>0){
+                for(let i=0;i<user.temporaryMessages.length;i++)
+                    {
+                        //console.log(user.temporaryMessages[i])
+                        io.to(socket.id).emit('sendMessage', user.temporaryMessages[i]);
 
-        io.to(users.get(recipientId)).emit('sendMessage', msg);
+                    }
+                    user.temporaryMessages=[]
+                    await user.save()
+            }
+            
+          } catch (error) {
+            
+          }
+            
+
+    socket.on('sendMessage', async (recipientId, msg) => {
+        const sid=(users.get(recipientId))
+        if(sid===undefined)
+            {
+                const user=await User.findOne({username:recipientId})
+                user.temporaryMessages.push(msg)
+                user.save()
+            }
+        io.to(sid).emit('sendMessage', msg);
+        console.log(msg,recipientId)
     });
 
     socket.on('disconnect', () => {
-        console.log(`User disconnected: ${socket.id}`);
+        //console.log(`User disconnected: ${socket.id}`);
         users.delete(socket.username)
-        console.log(users)
+        //console.log(users)
 
     });
 });
@@ -74,5 +98,5 @@ mongoose.connect(process.env.DB_URL);
 // Server listening
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`Server is listening on port ${PORT}`);
+    //console.log(`Server is listening on port ${PORT}`);
 });
