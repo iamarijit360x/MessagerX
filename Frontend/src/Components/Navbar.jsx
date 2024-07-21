@@ -17,7 +17,7 @@ const StyledList = styled(List)({
 
 const Navbar = () => {
   return (
-    <StyledDrawer variant="permanent" anchor="left">
+    <StyledDrawer variant="temporary" anchor="top">
       <StyledList>
         <ListItem >
           <AddCommentIcon/>

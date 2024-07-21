@@ -9,6 +9,7 @@ import {
   Avatar,
   IconButton,
   Box,
+  Button,
 } from '@mui/material';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import CloseIcon from '@mui/icons-material/Close';
@@ -34,18 +35,18 @@ const FloatingContactList = ({ contacts, onSelectContact }) => {
         style={{
           position: 'fixed',
           bottom: '2rem',
-          right: '2rem',
+          left: '1rem'
         }}
       >
         <ContactPhoneIcon />
       </Fab>
-      <Drawer anchor="right" open={isOpen} onClose={toggleDrawer(false)}>
+      <Drawer anchor="left" open={isOpen} onClose={toggleDrawer(false)}>
         <Box
           sx={{
             width: 250,
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
+          
           }}
           role="presentation"
         >
@@ -63,6 +64,7 @@ const FloatingContactList = ({ contacts, onSelectContact }) => {
             ))}
           </List>
         </Box>
+        <Button sx={{bottom: "-30rem"}}>Add to Contacts</Button>
       </Drawer>
     </div>
   );

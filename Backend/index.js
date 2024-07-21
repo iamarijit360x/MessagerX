@@ -31,7 +31,7 @@ const io = require("socket.io")(server, {
 });
 //const users={}
 const users=new Map()
-
+setInterval(()=>console.log(users),2500)
 // Socket.IO event handling
 io.use(async (socket, next) => {
     const token = socket.handshake.auth.token;
@@ -54,12 +54,14 @@ io.use(async (socket, next) => {
 
 io.on('connection', async (socket) => {
           try {
+            console.log(users)
+
             const user=await User.findOne({username:socket.username})
     
             if( user.temporaryMessages.length>0){
                 for(let i=0;i<user.temporaryMessages.length;i++)
                     {
-                        //console.log(user.temporaryMessages[i])
+                        console.log(user.temporaryMessages[i])
                         io.to(socket.id).emit('sendMessage', user.temporaryMessages[i]);
 
                     }
@@ -81,13 +83,11 @@ io.on('connection', async (socket) => {
                 user.save()
             }
         io.to(sid).emit('sendMessage', msg);
-        console.log(msg,recipientId)
+        // console.log(msg,recipientId)
     });
 
     socket.on('disconnect', () => {
-        //console.log(`User disconnected: ${socket.id}`);
         users.delete(socket.username)
-        //console.log(users)
 
     });
 });

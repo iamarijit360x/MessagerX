@@ -3,6 +3,7 @@ import { TextField, Button, Container, Box, Typography, IconButton, InputAdornme
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useTheme } from '@mui/material/styles';
+import { useAuth } from '../Middleware/AuthContex';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const SignIn = () => {
@@ -11,6 +12,7 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(true);
   const theme=useTheme()
   const navigate=useNavigate()
+  const {login}=useAuth()
   const handleEmailChange = (event) => {
     setEmail(event.target.value);
   };
@@ -31,8 +33,10 @@ const SignIn = () => {
     .then((response)=>{
       localStorage.setItem("token",response.data.token)
       if(response.data.success)
-       { navigate('/dashboard')
-        localStorage.setItem("username",email)
+       { 
+        
+          login(response.data)
+          localStorage.setItem("username",email)
 
 
        }

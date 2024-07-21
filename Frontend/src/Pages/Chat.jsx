@@ -17,12 +17,17 @@ import {
 } from '@mui/material';
 import FloatingContactList from '../Components/Contacts';
 
-const socket = io(import.meta.env.VITE_BACKEND_URL, {
-    auth: {
-        token: localStorage.getItem('token') // Assuming the token is stored in localStorage
-    }
-});
 
+const token=localStorage.getItem('token')
+let socket;
+if(token)
+{ 
+    socket = io(import.meta.env.VITE_BACKEND_URL, {
+    auth: {
+        token: token  // Assuming the token is stored in localStorage
+    }});
+    console.log(socket)
+}
 const Chat = () => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState([]);
@@ -35,6 +40,34 @@ const Chat = () => {
     const [chatBox,setOpenChatBox]=useState(false)
     const [bigScreen,setBigScreen]=useState(window.innerWidth>=750);
 
+    useEffect(() => {
+        const reloadCount = sessionStorage.getItem('reloadCount');
+        if(reloadCount < 1) {
+          sessionStorage.setItem('reloadCount', String(reloadCount + 1));
+          window.location.reload();
+        } else {
+          sessionStorage.removeItem('reloadCount');
+        }
+    }, []); // Empty dependency array means this runs once on mount
+   
+
+    function getMessagesFromLocalStorage(){
+        const storedMessages = localStorage.getItem('messages');
+    
+        // Check if there are stored messages
+        if (storedMessages) {
+            try {
+                // Parse the stored messages string back into an object
+                const parsedMessages = JSON.parse(storedMessages);
+                console.log(parsedMessages)
+                // Set the parsed messages object into state (assuming messages is your state variable)
+                setMessagesObj(parsedMessages);
+            } catch (error) {
+                // Handle parsing errors if any
+                console.error('Error parsing stored messages:', error);
+            }
+        }
+    }
   useEffect(() => {
     // Function to update isSmallScreen state
 
@@ -66,37 +99,19 @@ const Chat = () => {
     },[messagesObj])
 
     useEffect(() => {
-        // Retrieve the stored messages string from localStorage
-        const storedMessages = localStorage.getItem('messages');
-    
-        // Check if there are stored messages
-        if (storedMessages) {
-            try {
-                // Parse the stored messages string back into an object
-                const parsedMessages = JSON.parse(storedMessages);
-                console.log(parsedMessages)
-                // Set the parsed messages object into state (assuming messages is your state variable)
-                setMessagesObj(parsedMessages);
-            } catch (error) {
-                // Handle parsing errors if any
-                console.error('Error parsing stored messages:', error);
-            }
-        }
-    }, []);
-
-    useEffect(()=>{//LOADING CONTACTS FROM BACKEND
         setLoading(true)
         axios.get(import.meta.env.VITE_BACKEND_URL+'/getcontacts',{headers:{'Authorization':localStorage.getItem("token")}})
         .then((response)=>{setContacts(response.data);setUsername(localStorage.getItem("username"));})
         .then(()=>{setLoading(false);console.log(contacts);})
-        
-
-      },[])
-
+        .then(()=>{getMessagesFromLocalStorage()})
+        // Retrieve the stored messages string from localStorage
+       
+    }, []);
 
 
     useEffect(() => {
-        socket.on('sendMessage', (msg) => {
+        if(socket)
+       { socket.on('sendMessage', (msg) => {
             setMessagesObj(prevMessagesObj => {
                 const newMessagesObj = { ...prevMessagesObj };
 
@@ -116,7 +131,7 @@ const Chat = () => {
        
         return () => {
             socket.off('sendMessage');
-        };
+        };}
     }, []);
 
     
@@ -181,7 +196,7 @@ const Chat = () => {
                         <Paper onClick={()=> handleSelectContactsByUsername(item)} key={index} sx={{minHeight:"3rem",cursor:"pointer",alignContent: "center",paddingX:"6%",minWidth:"94%","&:hover": {
                             backgroundColor:"Highlight", 
                         },}}>
-                            <Typography variant="body2" fontWeight="bold">{item}</Typography>
+                            <Typography variant="body2" fontWeight="bold">{contacts.find(obj=>obj.username===item)?.name??item}</Typography>
                         </Paper>
 
                     ))}
@@ -242,7 +257,7 @@ const Chat = () => {
            
         
         }
-             <FloatingContactList contacts={contacts} onSelectContact={handleSelectContacts} />
+            {(bigScreen || !chatBox )&& <FloatingContactList contacts={contacts} onSelectContact={handleSelectContacts} />}
 
         </Container>
     );

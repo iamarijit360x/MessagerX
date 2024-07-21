@@ -9,6 +9,8 @@ import Chat from './Pages/Chat';
 import SignIn from './Pages/SignIn';
 import Dashboard from './Pages/Dashboard';
 import Navbar from './Components/Navbar';
+import { AuthProvider } from './Middleware/AuthContex';
+import { NotProtectedRoute, ProtectedRoute } from './Middleware/routeProtect';
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -71,13 +73,23 @@ export default function ToggleColorMode() {
   );
 
   return (
+    
     <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
            <BrowserRouter>
-          <Routes>
-            <Route path='/' element={<SignIn />} />
-            <Route path='/dashboard' element={<Chat />} />
-          </Routes>
+           <AuthProvider>
+           <Navbar/>
+            <Routes>
+              
+              <Route element={<NotProtectedRoute/>}>
+                <Route path='/login' element={<SignIn />} />
+              </Route>
+              <Route element={<ProtectedRoute/>}>
+               
+                <Route path='/dashboard' element={<Chat />} />
+              </Route>
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>
     </ColorModeContext.Provider>
