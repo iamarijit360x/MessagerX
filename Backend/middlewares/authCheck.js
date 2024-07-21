@@ -4,7 +4,7 @@ exports.authCheck=function (req,res,next){
     const token=req.header('Authorization')
     if(!token)
     {
-        res.status(403).json({message:"No Token Provided",error:"forbidden"})
+        return res.status(403).json({message:"No Token Provided",error:"forbidden"})
     }
     try{
         const decoded=jwt.verify(token,process.env.SECRET)
@@ -13,7 +13,7 @@ exports.authCheck=function (req,res,next){
     }
     catch(err){
         console.log(err)
-        res.status(403).json({message:"Invalid Token"})
+        return res.status(403).json({message:"Invalid Token"})
 
     }
 }

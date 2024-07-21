@@ -16,6 +16,7 @@ import {
     Fab,
 } from '@mui/material';
 import FloatingContactList from '../Components/Contacts';
+import axiosInstance from '../Middleware/axiosConfig';
 
 
 const token=localStorage.getItem('token')
@@ -100,11 +101,10 @@ const Chat = () => {
 
     useEffect(() => {
         setLoading(true)
-        axios.get(import.meta.env.VITE_BACKEND_URL+'/getcontacts',{headers:{'Authorization':localStorage.getItem("token")}})
+        axiosInstance.get(import.meta.env.VITE_BACKEND_URL+'/getcontacts')
         .then((response)=>{setContacts(response.data);setUsername(localStorage.getItem("username"));})
         .then(()=>{setLoading(false);console.log(contacts);})
         .then(()=>{getMessagesFromLocalStorage()})
-        // Retrieve the stored messages string from localStorage
        
     }, []);
 

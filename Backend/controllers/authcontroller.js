@@ -23,6 +23,6 @@ exports.signup= async (req,res)=>{
     
     const newUser=new User({username:username,password:password})
     await newUser.save()
-    res.status(200).json({message:"Account Created Successfully"})
+    return res.status(200).json({message:"Account Created Successfully"})
 }
 

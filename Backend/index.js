@@ -31,7 +31,7 @@ const io = require("socket.io")(server, {
 });
 //const users={}
 const users=new Map()
-setInterval(()=>console.log(users),2500)
+// setInterval(()=>console.log(users),2500)
 // Socket.IO event handling
 io.use(async (socket, next) => {
     const token = socket.handshake.auth.token;
