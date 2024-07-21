@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
 
@@ -29,12 +29,12 @@ const Chat = () => {
     const [messagesObj, setMessagesObj] = useState({});
     const [contacts,setContacts]=useState([])
     const [loading,setLoading]=useState(false)
-    const [selectedContact,setSelectedContact]=useState(null)
+    const [selectedContactName,setSelectedContactName]=useState(null)
     const [selectedContactUsername,setSelectedContactUsername]=useState("")
     const [username,setUsername]=useState('')
     const [chatBox,setOpenChatBox]=useState(false)
     const [bigScreen,setBigScreen]=useState(window.innerWidth>=750);
-    
+
   useEffect(() => {
     // Function to update isSmallScreen state
 
@@ -57,9 +57,34 @@ const Chat = () => {
  
 
     useEffect(()=>{
-        
-    },[])
-    useEffect(()=>{
+        if(Object.keys(messagesObj).length)
+       { 
+            const serializedMessages = JSON.stringify(messagesObj);
+            console.log(serializedMessages)
+            localStorage.setItem('messages', serializedMessages);
+       }
+    },[messagesObj])
+
+    useEffect(() => {
+        // Retrieve the stored messages string from localStorage
+        const storedMessages = localStorage.getItem('messages');
+    
+        // Check if there are stored messages
+        if (storedMessages) {
+            try {
+                // Parse the stored messages string back into an object
+                const parsedMessages = JSON.parse(storedMessages);
+                console.log(parsedMessages)
+                // Set the parsed messages object into state (assuming messages is your state variable)
+                setMessagesObj(parsedMessages);
+            } catch (error) {
+                // Handle parsing errors if any
+                console.error('Error parsing stored messages:', error);
+            }
+        }
+    }, []);
+
+    useEffect(()=>{//LOADING CONTACTS FROM BACKEND
         setLoading(true)
         axios.get(import.meta.env.VITE_BACKEND_URL+'/getcontacts',{headers:{'Authorization':localStorage.getItem("token")}})
         .then((response)=>{setContacts(response.data);setUsername(localStorage.getItem("username"));})
@@ -94,6 +119,8 @@ const Chat = () => {
         };
     }, []);
 
+    
+
     const handleSendMessage = () => {
         let recipientId=selectedContactUsername
         if (message.trim() && recipientId.trim()) {
@@ -119,17 +146,24 @@ const Chat = () => {
     };
 
     const  handleSelectContacts=(index)=>{
-        setSelectedContact(index)
         setOpenChatBox(true)
         setSelectedContactUsername(contacts[index].username)
+        setSelectedContactName(contacts[index].name)
     }
 
     const  handleSelectContactsByUsername=(item)=>{
         setOpenChatBox(true)
         setSelectedContactUsername(item)
+        setSelectedContactName(contacts.find(obj=>obj.username===item)?.name??item)
+
     }
 
+    const boxRef = useRef(null);
 
+    useEffect(() => {
+        if (boxRef.current) 
+            boxRef.current.scrollTop = boxRef.current.scrollHeight;}
+)
 
 
 
@@ -160,8 +194,8 @@ const Chat = () => {
                 minWidth:"60%"
             })}}>
                     {!bigScreen && chatBox && <Button onClick={()=>{setOpenChatBox(!chatBox)}}>{"<--"}</Button> }
-                    <Typography sx={{ borderBottom: "1px solid black" }}>{}</Typography>
-                    <Box sx={{
+                    <Typography sx={{ borderBottom: "1px solid black" }}>{selectedContactName}</Typography>
+                    <Box ref={boxRef} sx={{
                         overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
                             width: '8px',
                         },
