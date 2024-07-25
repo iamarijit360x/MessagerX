@@ -1,7 +1,8 @@
 import React, { useState, useEffect,useRef } from 'react';
 import io from 'socket.io-client';
 import axios from 'axios';
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import SendIcon from '@mui/icons-material/Send';
 import {
     Container,
     TextField,
@@ -205,11 +206,11 @@ const Chat = () => {
             </Paper>}
            
             {(chatBox)? 
-            <><Paper elevation={3} sx={{ padding:"2rem",height: "88vh", maxWidth: "90%", minWidth: "90%", display: "flex", flexDirection: "column", gap: "2%", ...(bigScreen && {
+            <><Paper elevation={3} sx={{ paddingBottom:"2rem",minHeight: "41.5rem", maxWidth: "90%", minWidth: "90%", display: "flex", flexDirection: "column", gap: "2%", ...(bigScreen && {
                 minWidth:"60%"
             })}}>
-                    {!bigScreen && chatBox && <Button onClick={()=>{setOpenChatBox(!chatBox)}}>{"<--"}</Button> }
-                    <Typography sx={{ borderBottom: "1px solid black" }}>{selectedContactName}</Typography>
+                    {!bigScreen && chatBox && <Button onClick={()=>{setOpenChatBox(!chatBox)}}><ArrowBackIcon/></Button> }
+                    <Typography sx={{boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",padding:"0.5rem 2rem 0.5rem" }}>{selectedContactName}</Typography>
                     <Box ref={boxRef} sx={{
                         overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
                             width: '8px',
@@ -229,6 +230,7 @@ const Chat = () => {
                             <Paper
                                 key={index}
                                 sx={{
+                                    margin:"0 1.5rem 0 1.5rem",
                                     display: "flex",
                                     maxWidth: "70%",
                                     padding: "1%",
@@ -242,9 +244,9 @@ const Chat = () => {
                         ))}
                     </Box>
                    
-                    <Box sx={{ minWidth: '90%', border: '1px solid black', borderRadius: '10px', boxShadow: 2, position: 'relative' }}>
-                        <InputBase placeholder='Send a Message' sx={{ minWidth: "96%", overflow: "hidden", maxHeight: "4rem", paddingX: "1rem" }} value={message} onChange={(event) => setMessage(event.target.value)} />
-                        <Button sx={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }} onClick={handleSendMessage}>Send</Button>
+                    <Box sx={{ minWidth: '90%', border: '1px solid black', borderRadius: '10px', boxShadow: 2, position: 'relative',mx:"1rem"}}>
+                        <InputBase placeholder='Send a Message' sx={{ minWidth: "96%", overflow: "hidden", minHeight: "3rem", paddingX: "1rem" }} value={message} onChange={(event) => setMessage(event.target.value)} />
+                        <Button sx={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }} onClick={handleSendMessage}><SendIcon/></Button>
                     </Box>
                 </Paper>
                </>:bigScreen && 
