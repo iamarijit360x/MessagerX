@@ -16,7 +16,7 @@ exports.addtocontacts= async (req,res)=>{
     }
     
     const contact = { username: username, name: name };
-    const contactAlreadyExists=currentUser.contacts.find((item)=>item.username=contact.username)
+    const contactAlreadyExists=currentUser.contacts.find((item)=>item.username==contact.username)
     if(contactAlreadyExists)
         return res.status(202).json({message: 'Contact Already Exists'});
 

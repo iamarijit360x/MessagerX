@@ -18,15 +18,3 @@ exports.authCheck=function (req,res,next){
     }
 }
 
-exports.authenticateUser=function (token) {
-    try {
-        const decoded = jwt.verify(token, process.env.SECRET);
-        const userEmail = decoded.email;
-        console.log(decoded)
-        return userEmail;
-    } catch (error) {
-        console.error('Error authenticating user:', error.message);
-        return null;
-    }
-}
-

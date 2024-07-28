@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import CloseIcon from '@mui/icons-material/Close';
-import FormDialog from './AddToContacts';
+import AddtoContacts from './AddToContacts';
 
 const FloatingContactList = ({ contacts, onSelectContact }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +35,7 @@ const FloatingContactList = ({ contacts, onSelectContact }) => {
         onClick={toggleDrawer(true)}
         style={{
           position: 'fixed',
-          bottom: '2rem',
+          bottom: '3rem',
           left: '1rem'
         }}
       >
@@ -66,7 +66,7 @@ const FloatingContactList = ({ contacts, onSelectContact }) => {
           </List>
         </Box>
         {/* <Button sx={{bottom: "-30rem"}} onClick={}>Add to Contacts</Button> */}
-        <FormDialog/>
+        <AddtoContacts/>
       </Drawer>
     </div>
   );

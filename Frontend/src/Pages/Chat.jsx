@@ -18,6 +18,7 @@ import {
 } from '@mui/material';
 import FloatingContactList from '../Components/Contacts';
 import axiosInstance from '../Middleware/axiosConfig';
+import AddtoContacts from '../Components/AddToContacts';
 
 
 const token=localStorage.getItem('token')
@@ -28,7 +29,7 @@ if(token)
     auth: {
         token: token  // Assuming the token is stored in localStorage
     }});
-    console.log(socket)
+    // console.log(socket)
 }
 const Chat = () => {
     const [message, setMessage] = useState('');
@@ -41,7 +42,7 @@ const Chat = () => {
     const [username,setUsername]=useState('')
     const [chatBox,setOpenChatBox]=useState(false)
     const [bigScreen,setBigScreen]=useState(window.innerWidth>=750);
-
+    const [unknown,setUnknown]=useState(false)
     useEffect(() => {
         const reloadCount = sessionStorage.getItem('reloadCount');
         if(reloadCount < 1) {
@@ -61,7 +62,7 @@ const Chat = () => {
             try {
                 // Parse the stored messages string back into an object
                 const parsedMessages = JSON.parse(storedMessages);
-                console.log(parsedMessages)
+                // console.log(parsedMessages)
                 // Set the parsed messages object into state (assuming messages is your state variable)
                 setMessagesObj(parsedMessages);
             } catch (error) {
@@ -70,6 +71,32 @@ const Chat = () => {
             }
         }
     }
+useEffect  (()=>{
+    const sortDataByLastObjectTimestamp = (obj) => {
+        const sortedEntries = Object.entries(obj).sort(([, arrA], [, arrB]) => {
+            const lastA = arrA[arrA.length - 1]?.timestamp;
+            const lastB = arrB[arrB.length - 1]?.timestamp;
+            return new Date(lastB) - new Date(lastA); // Sort in descending order
+        });
+    
+        return Object.fromEntries(sortedEntries);
+    };
+    
+    // Sort the data
+    const sortedData = sortDataByLastObjectTimestamp(messagesObj);
+    
+    // Log the sorted data
+    console.log(sortedData);
+    // Log the sorted data
+   setMessages(sortedData);
+   if(Object.keys(messagesObj).length)
+    { 
+         const serializedMessages = JSON.stringify(sortedData);
+         // console.log(serializedMessages)
+         localStorage.setItem('messages', serializedMessages);
+    }},[messagesObj])
+
+
   useEffect(() => {
     // Function to update isSmallScreen state
 
@@ -91,24 +118,18 @@ const Chat = () => {
 }, [bigScreen]);
  
 
-    useEffect(()=>{
-        if(Object.keys(messagesObj).length)
-       { 
-            const serializedMessages = JSON.stringify(messagesObj);
-            console.log(serializedMessages)
-            localStorage.setItem('messages', serializedMessages);
-       }
-    },[messagesObj])
 
     useEffect(() => {
         setLoading(true)
         axiosInstance.get(import.meta.env.VITE_BACKEND_URL+'/getcontacts')
         .then((response)=>{setContacts(response.data);setUsername(localStorage.getItem("username"));})
-        .then(()=>{setLoading(false);console.log(contacts);})
-        .then(()=>{getMessagesFromLocalStorage()})
+        .then(()=>{getMessagesFromLocalStorage();setLoading(false);})
        
     }, []);
-
+   
+    useEffect(()=>{
+        // console.log(contacts)
+    },[contacts])
 
     useEffect(() => {
         if(socket)
@@ -125,7 +146,6 @@ const Chat = () => {
                 newMessagesObj[msg.user].push(msg);
                 return newMessagesObj;
               });
-            setMessages((prevMessages) => [...prevMessages, {...msg}]);
         });
         console.log(messagesObj)
 
@@ -153,11 +173,10 @@ const Chat = () => {
                 newMessagesObj[recipientId].push(msg);
                 return newMessagesObj;
               });
-            setMessages((prevMessages) => [...prevMessages, {...msg }]);
             setMessage('');
             localStorage.setItem('messageObj',messagesObj)
 
-            console.log(messagesObj)
+            // console.log(messagesObj)
         }
     };
 
@@ -170,7 +189,14 @@ const Chat = () => {
     const  handleSelectContactsByUsername=(item)=>{
         setOpenChatBox(true)
         setSelectedContactUsername(item)
-        setSelectedContactName(contacts.find(obj=>obj.username===item)?.name??item)
+        const contact=contacts.find(obj=>obj.username===item)
+        if(!contact){
+            setUnknown(true)
+            setSelectedContactName(item)
+        }
+        else
+            setSelectedContactName(contact.name)
+      
 
     }
 
@@ -184,20 +210,35 @@ const Chat = () => {
 
 
     return (
-        <Container maxWidth="100vw" sx={{display:"flex",justifyContent:"center"}}>
+        <Container maxWidth="100vw"  sx={{display:"flex",justifyContent:"center",maxHeight:"98vh",paddingTop:"1rem", ...(!bigScreen && {minHeight:"98vh",minWidth:"100%,"})}}>
           
            {(!chatBox|| bigScreen) && 
            
-           <Paper elevation={3} sx={{ padding:"2rem",minWidth:"90%",height: "88vh",
+           <Paper elevation={3} sx={{ padding:"2rem",minWidth:"100%",
            ...(bigScreen && {
             minWidth:"30%"})}}>
-                <Box display="flex" flexDirection="column" gap={1} >
-                    {!loading && Object.keys(messagesObj).map((item,index)=>(
+                <Box display="flex" flexDirection="column" gap={1}  sx={{height:"88vh" , minWidth: "90%", display: "flex", flexDirection: "column", gap: "2%",   overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
+                width: '2px',
+            },
+            '&::-webkit-scrollbar-track': {
+                backgroundColor: '#f1f1f1',
+            },
+            '&::-webkit-scrollbar-thumb': {
+                backgroundColor: '#888',
+                borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+                backgroundColor: '#555',
+            }, ...(bigScreen && {
+                minWidth:"60%"
+            })}}>
+                    {!loading && Object.keys(messages).map((item,index)=>(
                         
-                        <Paper onClick={()=> handleSelectContactsByUsername(item)} key={index} sx={{minHeight:"3rem",cursor:"pointer",alignContent: "center",paddingX:"6%",minWidth:"94%","&:hover": {
+                        <Paper onClick={()=> handleSelectContactsByUsername(item)} key={index} sx={{minHeight:"3rem",cursor:"pointer",alignContent: "center",paddingX:"6%","&:hover": {
                             backgroundColor:"Highlight", 
                         },}}>
                             <Typography variant="body2" fontWeight="bold">{contacts.find(obj=>obj.username===item)?.name??item}</Typography>
+
                         </Paper>
 
                     ))}
@@ -206,11 +247,24 @@ const Chat = () => {
             </Paper>}
            
             {(chatBox)? 
-            <><Paper elevation={3} sx={{ paddingBottom:"2rem",minHeight: "41.5rem", maxWidth: "90%", minWidth: "90%", display: "flex", flexDirection: "column", gap: "2%", ...(bigScreen && {
+            <><Paper elevation={3} sx={{ paddingBottom:"2rem", maxWidth: "90%", minWidth: "100%", display: "flex", flexDirection: "column", gap: "2%",   overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
+                width: '4px',
+            },
+            '&::-webkit-scrollbar-track': {
+                backgroundColor: '#f1f1f1',
+            },
+            '&::-webkit-scrollbar-thumb': {
+                backgroundColor: '#888',
+                borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+                backgroundColor: '#555',
+            }, ...(bigScreen && {
                 minWidth:"60%"
             })}}>
                     {!bigScreen && chatBox && <Button onClick={()=>{setOpenChatBox(!chatBox)}}><ArrowBackIcon/></Button> }
                     <Typography sx={{boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",padding:"0.5rem 2rem 0.5rem" }}>{selectedContactName}</Typography>
+                   {unknown && <Button><AddtoContacts username={selectedContactName}/></Button>}
                     <Box ref={boxRef} sx={{
                         overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
                             width: '8px',
@@ -226,7 +280,7 @@ const Chat = () => {
                             backgroundColor: '#555',
                         },
                     }}>
-                        {(messagesObj[selectedContactUsername] || []).map((msg, index) => (
+                        {(messages[selectedContactUsername] || []).map((msg, index) => (
                             <Paper
                                 key={index}
                                 sx={{
@@ -259,7 +313,7 @@ const Chat = () => {
            
         
         }
-            {(bigScreen || !chatBox )&& <FloatingContactList contacts={contacts} onSelectContact={handleSelectContacts} />}
+            {!loading&&(bigScreen || !chatBox )&& <FloatingContactList contacts={contacts} onSelectContact={handleSelectContacts} />}
 
         </Container>
     );

@@ -7,10 +7,10 @@ import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Chat from './Pages/Chat';
 import SignIn from './Pages/SignIn';
-import Dashboard from './Pages/Dashboard';
 import Navbar from './Components/Navbar';
 import { AuthProvider } from './Middleware/AuthContex';
 import { NotProtectedRoute, ProtectedRoute } from './Middleware/routeProtect';
+import WelcomePage from './Pages/WelcomeScreen';
 
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
@@ -80,7 +80,7 @@ export default function ToggleColorMode() {
            <AuthProvider>
            <Navbar/>
             <Routes>
-              
+              <Route path='/' element={<WelcomePage/>}/>
               <Route element={<NotProtectedRoute/>}>
                 <Route path='/login' element={<SignIn />} />
               </Route>

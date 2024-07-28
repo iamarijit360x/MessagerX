@@ -7,9 +7,9 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import axiosInstance from '../Middleware/axiosConfig';
-export default function FormDialog() {
+export default function AddtoContacts({username}) {
   const [open, setOpen] = React.useState(false);
-
+  const [email,setEmail]=React.useState(username??"")
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -53,6 +53,8 @@ export default function FormDialog() {
             margin="dense"
             id="name"
             name="email"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
             label="Email Address"
             type="string"
             fullWidth
