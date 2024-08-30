@@ -6,7 +6,8 @@ import Box from '@mui/material/Box';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Chat from './Pages/Chat';
-import SignIn from './Pages/SignIn';
+import SignIn from './Pages/Auth/SignIn';
+import SignUp from './Pages/Auth/SignUp';
 import Navbar from './Components/Navbar';
 import { AuthProvider } from './Middleware/AuthContex';
 import { NotProtectedRoute, ProtectedRoute } from './Middleware/routeProtect';
@@ -82,7 +83,8 @@ export default function ToggleColorMode() {
             <Routes>
               <Route path='/' element={<WelcomePage/>}/>
               <Route element={<NotProtectedRoute/>}>
-                <Route path='/login' element={<SignIn />} />
+                <Route path='/signin' element={<SignIn />} />
+                <Route path='/signup' element={<SignUp />} />
               </Route>
               <Route element={<ProtectedRoute/>}>
                

@@ -1,14 +1,15 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);
 
+// eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
-  const [token, setToken] = useState();
 
   const navigate = useNavigate();
 
@@ -19,18 +20,16 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (data) => {
-    localStorage.setItem('token', data.token);
-    setToken(data.token)
+  const login = (token) => {
+    localStorage.setItem('token', token);
     setIsAuthenticated(true);
     navigate('/dashboard');
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.clear()
     setIsAuthenticated(false);
-    navigate('/login');
+    navigate('/sigin');
   };
 
   return (

@@ -14,10 +14,11 @@ import {
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import CloseIcon from '@mui/icons-material/Close';
 import AddtoContacts from './AddToContacts';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const FloatingContactList = ({ contacts, onSelectContact }) => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const naviagte=useNavigate()
   const toggleDrawer = (open) => () => {
     setIsOpen(open);
   };
@@ -55,6 +56,7 @@ const FloatingContactList = ({ contacts, onSelectContact }) => {
             <CloseIcon />
           </IconButton>
           <List>
+          <Button onClick={()=>{localStorage.clear();naviagte('/signin')}}>Logout</Button>
             {contacts.map((contact, index) => (
               <ListItem button key={index} onClick={() => handleContactClick(index)}>
                 <ListItemIcon>
