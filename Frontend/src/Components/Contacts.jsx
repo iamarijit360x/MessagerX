@@ -10,13 +10,15 @@ import {
   IconButton,
   Box,
   Button,
+  Typography,
 } from '@mui/material';
 import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import CloseIcon from '@mui/icons-material/Close';
 import AddtoContacts from './AddToContacts';
 import { Navigate, useNavigate } from 'react-router-dom';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-const FloatingContactList = ({ contacts, onSelectContact }) => {
+const FloatingContactList = ({ contacts, onSelectContact,open,onClick}) => {
   const [isOpen, setIsOpen] = useState(false);
   const naviagte=useNavigate()
   const toggleDrawer = (open) => () => {
@@ -30,18 +32,18 @@ const FloatingContactList = ({ contacts, onSelectContact }) => {
 
   return (
     <div>
-      <Fab
-        color="primary"
-        aria-label="contacts"
-        onClick={toggleDrawer(true)}
-        style={{
-          position: 'fixed',
-          bottom: '3rem',
-          left: '1rem'
-        }}
+    <ListItem button sx={{ padding: '0 16px' }} aria-label="contacts"
+        onClick={toggleDrawer('open')}>
+                        <ListItemIcon sx={{ minWidth: 'auto' }}>
+                            <AccountCircleIcon fontSize="medium" />
+                        </ListItemIcon>
+                        {open && <ListItemText primary="Contacts" sx={{ paddingLeft: 2 }} />}
+                    </ListItem>
+      <Typography
+        
       >
-        <ContactPhoneIcon />
-      </Fab>
+       
+      </Typography>
       <Drawer anchor="left" open={isOpen} onClose={toggleDrawer(false)}>
         <Box
           sx={{
@@ -56,7 +58,7 @@ const FloatingContactList = ({ contacts, onSelectContact }) => {
             <CloseIcon />
           </IconButton>
           <List>
-          <Button onClick={()=>{localStorage.clear();naviagte('/signin')}}>Logout</Button>
+          
             {contacts.map((contact, index) => (
               <ListItem button key={index} onClick={() => handleContactClick(index)}>
                 <ListItemIcon>

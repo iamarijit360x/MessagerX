@@ -19,7 +19,7 @@ import {
 import FloatingContactList from '../Components/Contacts';
 import axiosInstance from '../Middleware/axiosConfig';
 import AddtoContacts from '../Components/AddToContacts';
-
+import VerticalNavbar from '../Components/Navbar';
 
 const token=localStorage.getItem('token')
 let socket;
@@ -43,6 +43,7 @@ const Chat = () => {
     const [chatBox,setOpenChatBox]=useState(false)
     const [bigScreen,setBigScreen]=useState(window.innerWidth>=750);
     const [unknown,setUnknown]=useState(false)
+    const [shownavbar,setShowNavbar]=useState(true)
     useEffect(() => {
         const reloadCount = sessionStorage.getItem('reloadCount');
         if(reloadCount < 1) {
@@ -210,14 +211,21 @@ useEffect  (()=>{
 
 
     return (
-        <Container maxWidth="100vw"  sx={{display:"flex",justifyContent:"center",maxHeight:"98vh",paddingTop:"1rem", ...(!bigScreen && {minHeight:"98vh",minWidth:"100%,"})}}>
-          
+        <Container maxWidth="100vw"  sx={{display:"flex",justifyContent:"center",height:"98vh",paddingTop:"1rem", ...(!bigScreen && {minHeight:"98vh",minWidth:"100%,"})}}>
+            {/* {!bigScreen && <Button sx={{position:'fixed'}}onClick={()=>setShowNavbar(!shownavbar)}>X</Button>} */}
+            {shownavbar && <VerticalNavbar contacts={contacts} handleSelectContacts={handleSelectContacts} />}
            {(!chatBox|| bigScreen) && 
            
-           <Paper elevation={3} sx={{ padding:"2rem",minWidth:"100%",
+           <Paper elevation={3} 
+           sx={{ 
+            minWidth:"100%",
+          
            ...(bigScreen && {
-            minWidth:"30%"})}}>
-                <Box display="flex" flexDirection="column" gap={1}  sx={{height:"88vh" , minWidth: "90%", display: "flex", flexDirection: "column", gap: "2%",   overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
+            minWidth:"30%",
+            marginInlineStart:'3.2rem'
+            
+            })}}>
+                <Box display="flex" flexDirection="column" gap={1}  sx={{height:"88vh" , minWidth: "100%", display: "flex", flexDirection: "column", gap: "2%",   overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
                 width: '2px',
             },
             '&::-webkit-scrollbar-track': {
@@ -247,7 +255,7 @@ useEffect  (()=>{
             </Paper>}
            
             {(chatBox)? 
-            <><Paper elevation={3} sx={{ paddingBottom:"2rem", maxWidth: "90%", minWidth: "100%", display: "flex", flexDirection: "column", gap: "2%",   overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
+            <><Paper elevation={3} sx={{ paddingBottom:"2rem", width: "100%", minWidth: "100%", display: "flex", flexDirection: "column", gap: "2%",   overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
                 width: '4px',
             },
             '&::-webkit-scrollbar-track': {
@@ -304,16 +312,29 @@ useEffect  (()=>{
                     </Box>
                 </Paper>
                </>:bigScreen && 
-               <Paper elevation={3} sx={{ padding:"2rem",minWidth:"60%",minHeight:"80vh"}}>
-                <Box display="flex" flexDirection="column" gap={1} >
-                   Welcome
-
-               </Box>
-           </Paper>
+               <Paper elevation={3} 
+               sx={{ 
+                    padding:"2rem",
+                    minHeight:"80vh",
+                    alignContent:'center',
+                    width:'inherit'
+                    }} 
+                >
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    >
+                    <Typography variant="h6" align="center">
+                        Hello, Welcome to MessengerX
+                    </Typography>
+                </Box>
+  
+              </Paper>
            
         
         }
-            {!loading&&(bigScreen || !chatBox )&& <FloatingContactList contacts={contacts} onSelectContact={handleSelectContacts} />}
 
         </Container>
     );
