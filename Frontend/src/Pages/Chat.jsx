@@ -211,21 +211,40 @@ useEffect  (()=>{
 
 
     return (
-        <Container maxWidth="100vw"  sx={{display:"flex",justifyContent:"center",height:"98vh",paddingTop:"1rem", ...(!bigScreen && {minHeight:"98vh",minWidth:"100%,"})}}>
+        <Container 
+        maxWidth="100vw"  
+        disableGutters 
+        sx={{
+            display:"flex",
+            justifyContent:"center",
+            height:"98vh",
+            paddingTop:"1rem",
+             ...(!bigScreen && 
+             {
+                minHeight:"98vh",
+                minWidth:"100%,",
+            })}}>
             {/* {!bigScreen && <Button sx={{position:'fixed'}}onClick={()=>setShowNavbar(!shownavbar)}>X</Button>} */}
-            {shownavbar && <VerticalNavbar contacts={contacts} handleSelectContacts={handleSelectContacts} />}
+        <VerticalNavbar contacts={contacts} handleSelectContacts={handleSelectContacts} bigScreen={bigScreen}/>
            {(!chatBox|| bigScreen) && 
            
            <Paper elevation={3} 
            sx={{ 
             minWidth:"100%",
-          
            ...(bigScreen && {
             minWidth:"30%",
             marginInlineStart:'3.2rem'
             
-            })}}>
-                <Box display="flex" flexDirection="column" gap={1}  sx={{height:"88vh" , minWidth: "100%", display: "flex", flexDirection: "column", gap: "2%",   overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
+            }),
+            ...(!bigScreen && {
+                marginLeft:'2rem',
+                minWidth:'83%'
+                
+                })
+           
+            }}>
+                <Box display="flex" flexDirection="column" gap={1}  
+                sx={{height:"88vh" , minWidth: "100%", display: "flex", flexDirection: "column", gap: "2%",   overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
                 width: '2px',
             },
             '&::-webkit-scrollbar-track': {
@@ -255,7 +274,17 @@ useEffect  (()=>{
             </Paper>}
            
             {(chatBox)? 
-            <><Paper elevation={3} sx={{ paddingBottom:"2rem", width: "100%", minWidth: "100%", display: "flex", flexDirection: "column", gap: "2%",   overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
+            <><Paper elevation={3} sx={{ paddingBottom:"2rem", 
+                width: "100%", 
+                minWidth: "100%", 
+                display: "flex", 
+                flexDirection: "column", 
+                gap: "2%",   
+                overflow: 'auto', 
+                flexGrow: 1, 
+                display: "flex",
+                flexDirection: "column", 
+                '&::-webkit-scrollbar': {
                 width: '4px',
             },
             '&::-webkit-scrollbar-track': {
@@ -295,7 +324,7 @@ useEffect  (()=>{
                                     margin:"0 1.5rem 0 1.5rem",
                                     display: "flex",
                                     maxWidth: "70%",
-                                    padding: "1%",
+                                    padding: '0.5% 1% 0.5% 1%',
                                     backgroundColor: msg.user === username ? "lightgreen" : "lightblue", // Adjusted background color conditionally
                                     alignSelf: msg.user === username ? "start" : "end", // Adjusted textAlign,
                                     marginY: "1%"

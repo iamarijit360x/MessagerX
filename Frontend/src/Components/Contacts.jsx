@@ -20,7 +20,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const FloatingContactList = ({ contacts, onSelectContact,open,onClick}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const naviagte=useNavigate()
+  const bigScreen=window.innerWidth>=750;
   const toggleDrawer = (open) => () => {
     setIsOpen(open);
   };
@@ -32,7 +32,7 @@ const FloatingContactList = ({ contacts, onSelectContact,open,onClick}) => {
 
   return (
     <div>
-    <ListItem button sx={{ padding: '0 16px' }} aria-label="contacts"
+    <ListItem button sx={{ padding:bigScreen?'0 16px':'0' }} aria-label="contacts"
         onClick={toggleDrawer('open')}>
                         <ListItemIcon sx={{ minWidth: 'auto' }}>
                             <AccountCircleIcon fontSize="medium" />

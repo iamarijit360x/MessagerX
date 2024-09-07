@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.clear()
     setIsAuthenticated(false);
-    navigate('/sigin');
+    navigate('/signin');
   };
 
   return (
