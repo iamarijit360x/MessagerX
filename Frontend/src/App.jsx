@@ -69,6 +69,17 @@ export default function ToggleColorMode() {
                 },
               }),
         },
+        components: {
+          MuiButton: {
+            styleOverrides: {
+              // Override styles for the disabled state
+              disabled: {
+                backgroundColor: 'gray', // Change this to your desired color
+                color: 'red', // Optional: change the text color for the disabled button
+              },
+            },
+          },
+        },
       }),
     [mode],
   );

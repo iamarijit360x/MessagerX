@@ -14,7 +14,7 @@ import { useAuth } from '../Middleware/AuthContex';
 
 const VerticalNavbar = ({ contacts, handleSelectContacts,bigScreen }) => {
     const drawerWidthOpen = bigScreen ?240:130;  // Width when drawer is open
-    const drawerWidthClosed = bigScreen?60:30;  // Width when drawer is closed
+    const drawerWidthClosed = bigScreen?50:30;  // Width when drawer is closed
 
     const [open, setOpen] = useState(false);
     // Function to toggle drawer open/close
@@ -67,21 +67,21 @@ const VerticalNavbar = ({ contacts, handleSelectContacts,bigScreen }) => {
                 >
                     
 
-                    <ListItem button sx={{ padding: '0 16px' }}>
+                    <ListItem button sx={{ padding: '0 10px' }}>
                         <ListItemIcon sx={{ minWidth: 'auto' ,overflow: 'hidden' }}>
                             <SearchIcon fontSize="medium" />
                         </ListItemIcon>
                         {open && <ListItemText primary="Search" sx={{ paddingLeft: 2 }} />}
                     </ListItem>
 
-                    <ListItem button sx={{ padding: '0 16px' }}>
+                    <ListItem button sx={{ padding: '0 10px' }}>
                         <ListItemIcon sx={{ minWidth: 'auto' ,overflow: 'hidden' }}>
                             <NotificationsIcon fontSize="medium" />
                         </ListItemIcon>
                         {open && <ListItemText primary="Notifications" sx={{ paddingLeft: 2 }} />}
                     </ListItem>
 
-                    <ListItem button sx={{ padding: '0 16px' }}>
+                    <ListItem button sx={{ padding: '0 10px' }}>
                         <ListItemIcon sx={{ minWidth: 'auto' ,overflow: 'hidden' }}>
                             <MailIcon fontSize="medium" />
                         </ListItemIcon>
@@ -99,7 +99,7 @@ const VerticalNavbar = ({ contacts, handleSelectContacts,bigScreen }) => {
                     </ListItem>
 
 
-                    <ListItem button sx={{ padding: '0 16px' }}  onClick={logout}>
+                    <ListItem button sx={{ padding: '0 10px' }}  onClick={logout}>
                         <ListItemIcon sx={{ minWidth: 'auto' }}>
                             <LogoutIcon fontSize="medium" />
                         </ListItemIcon>

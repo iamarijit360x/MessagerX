@@ -32,7 +32,7 @@ const FloatingContactList = ({ contacts, onSelectContact,open,onClick}) => {
 
   return (
     <div>
-    <ListItem button sx={{ padding:bigScreen?'0 16px':'0' }} aria-label="contacts"
+    <ListItem button sx={{ padding:bigScreen?'0 10px':'0' }} aria-label="contacts"
         onClick={toggleDrawer('open')}>
                         <ListItemIcon sx={{ minWidth: 'auto' }}>
                             <AccountCircleIcon fontSize="medium" />

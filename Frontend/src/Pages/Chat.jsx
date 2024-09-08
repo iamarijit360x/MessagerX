@@ -181,19 +181,28 @@ useEffect  (()=>{
         }
     };
 
+    // useEffect(()=>{
+    //     if(!selectedContactUsername) return
+    //     let n=messages[selectedContactUsername].length-1
+    //     console.log(messages[selectedContactUsername][messages[selectedContactUsername].length-1].content)
+    // },[selectedContactUsername])
+
+    const [selectedContactIndex,setSelectedContactIndex]=useState('')
     const  handleSelectContacts=(index)=>{
+        
         setOpenChatBox(true)
         setSelectedContactUsername(contacts[index].username)
         setSelectedContactName(contacts[index].name)
+        setSelectedContactIndex(index)
     }
 
-    const  handleSelectContactsByUsername=(item)=>{
+    const  handleSelectContactsByUsername=(username)=>{
         setOpenChatBox(true)
-        setSelectedContactUsername(item)
-        const contact=contacts.find(obj=>obj.username===item)
+        setSelectedContactUsername(username)
+        const contact=contacts.find(obj=>obj.username===username)
         if(!contact){
             setUnknown(true)
-            setSelectedContactName(item)
+            setSelectedContactName(username)
         }
         else
             setSelectedContactName(contact.name)
@@ -208,6 +217,53 @@ useEffect  (()=>{
             boxRef.current.scrollTop = boxRef.current.scrollHeight;}
 )
 
+const formatDate = (utcDateString,onlyTime=false) => {
+    // Convert the UTC date string to a Date object
+    const date = new Date(utcDateString);
+    
+    // Convert dates to IST (UTC+5:30)
+    const istDate = new Date(date.getTime());
+    const istNow = new Date(Date.now() );
+    
+    // Extract year, month, day for formatting
+    const day = String(istDate.getDate()).padStart(2, '0');
+    const month = String(istDate.getMonth() + 1).padStart(2, '0');
+    const year = istDate.getFullYear();
+    
+    // Format date in dd/mm/yyyy
+    const formattedDate = `${day}/${month}/${year}`;
+    
+    // Format time in 12-hour AM/PM format
+    let hours = istDate.getHours();
+    const minutes = String(istDate.getMinutes()).padStart(2, '0');
+    const period = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; // Convert 24-hour time to 12-hour time
+    const timeString = `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
+
+    // Check if the date is today
+    if (istDate.toDateString() === istNow.toDateString() || onlyTime) {
+        return timeString;
+    }
+    
+    // Check if the date is yesterday
+    const yesterday = new Date(istNow);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (istDate.toDateString() === yesterday.toDateString()) {
+        return 'Yesterday';
+    }
+    
+    // Return date in dd/mm/yyyy format
+    return formattedDate;
+};
+
+// Example usage
+
+// Example usage
+
+
+// Example usage
+
+
 
 
     return (
@@ -218,31 +274,28 @@ useEffect  (()=>{
             display:"flex",
             justifyContent:"center",
             height:"98vh",
-            paddingTop:"1rem",
+            paddingTop:bigScreen?"1rem":'0REM',
              ...(!bigScreen && 
              {
-                minHeight:"98vh",
+                minHeight:"100vh",
                 minWidth:"100%,",
             })}}>
-            {/* {!bigScreen && <Button sx={{position:'fixed'}}onClick={()=>setShowNavbar(!shownavbar)}>X</Button>} */}
-        <VerticalNavbar contacts={contacts} handleSelectContacts={handleSelectContacts} bigScreen={bigScreen}/>
+            <VerticalNavbar contacts={contacts} handleSelectContacts={handleSelectContacts} bigScreen={bigScreen}/>
            {(!chatBox|| bigScreen) && 
            
            <Paper elevation={3} 
            sx={{ 
-            minWidth:"100%",
-           ...(bigScreen && {
-            minWidth:"30%",
-            marginInlineStart:'3.2rem'
-            
-            }),
-            ...(!bigScreen && {
-                marginLeft:'2rem',
-                minWidth:'83%'
-                
-                })
-           
+            minWidth: bigScreen ? "30%" : "83%",  // Adjust minWidth based on screen size
+            marginInlineStart: bigScreen ? '3.2rem' : '2rem',  // Adjust margin for big and small screens
+            width:'98%'
             }}>
+                 <Box sx={{boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)", 
+                            padding: "0.5rem 2rem 0.5rem",
+                            marginBottom: "0.5rem"
+                          }}> 
+                        <Typography >Chats</Typography>
+                 </Box>
+               
                 <Box display="flex" flexDirection="column" gap={1}  
                 sx={{height:"88vh" , minWidth: "100%", display: "flex", flexDirection: "column", gap: "2%",   overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
                 width: '2px',
@@ -261,10 +314,31 @@ useEffect  (()=>{
             })}}>
                     {!loading && Object.keys(messages).map((item,index)=>(
                         
-                        <Paper onClick={()=> handleSelectContactsByUsername(item)} key={index} sx={{minHeight:"3rem",cursor:"pointer",alignContent: "center",paddingX:"6%","&:hover": {
-                            backgroundColor:"Highlight", 
-                        },}}>
-                            <Typography variant="body2" fontWeight="bold">{contacts.find(obj=>obj.username===item)?.name??item}</Typography>
+                        <Paper
+                         onClick={()=> handleSelectContactsByUsername(item)} 
+                         key={index} 
+                          sx={{
+                            minHeight:"3rem",
+                            cursor:"pointer",
+                            alignContent: "center",
+                            paddingX:"6%",
+                            backgroundColor:selectedContactUsername===item?'rgba(0, 0, 0, 0.1)':'',
+                            display:'flex',
+                            justifyContent:"space-between",
+                            "&:hover": {
+                            backgroundColor:selectedContactUsername!==item &&"rgba(0, 0, 0, 0.05)"
+                            }
+                            
+
+
+                        }}>
+                            <Box>
+                                <Typography variant="body1" fontWeight="bold">{contacts.find(obj=>obj.username===item)?.name??item}</Typography>
+                                <Typography variant='caption' >{item?messages[item][messages[item].length-1].content:''}</Typography>
+
+                            </Box>
+                          
+                            <Typography sx={{alignContent:'center'}} variant="caption">{formatDate(messages[item][messages[item].length-1].timestamp)}</Typography>
 
                         </Paper>
 
@@ -274,7 +348,8 @@ useEffect  (()=>{
             </Paper>}
            
             {(chatBox)? 
-            <><Paper elevation={3} sx={{ paddingBottom:"2rem", 
+            <><Paper elevation={3} sx={{ 
+                paddingBottom:"2rem", 
                 width: "100%", 
                 minWidth: "100%", 
                 display: "flex", 
@@ -284,6 +359,7 @@ useEffect  (()=>{
                 flexGrow: 1, 
                 display: "flex",
                 flexDirection: "column", 
+                marginInlineStart:!bigScreen?"2rem":'0rem',
                 '&::-webkit-scrollbar': {
                 width: '4px',
             },
@@ -297,10 +373,14 @@ useEffect  (()=>{
             '&::-webkit-scrollbar-thumb:hover': {
                 backgroundColor: '#555',
             }, ...(bigScreen && {
-                minWidth:"60%"
+                minWidth:"60%",
+                
             })}}>
                     {!bigScreen && chatBox && <Button onClick={()=>{setOpenChatBox(!chatBox)}}><ArrowBackIcon/></Button> }
-                    <Typography sx={{boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",padding:"0.5rem 2rem 0.5rem" }}>{selectedContactName}</Typography>
+                    <Box sx={{boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",padding:"0.5rem 2rem 0.5rem" }}>
+                        <Typography >{selectedContactName}</Typography>
+                    </Box>
+ 
                    {unknown && <Button><AddtoContacts username={selectedContactName}/></Button>}
                     <Box ref={boxRef} sx={{
                         overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
@@ -325,12 +405,13 @@ useEffect  (()=>{
                                     display: "flex",
                                     maxWidth: "70%",
                                     padding: '0.5% 1% 0.5% 1%',
-                                    backgroundColor: msg.user === username ? "lightgreen" : "lightblue", // Adjusted background color conditionally
+                                    backgroundColor: msg.user === username ? "#f8dbec" : "lightblue", // Adjusted background color conditionally
                                     alignSelf: msg.user === username ? "start" : "end", // Adjusted textAlign,
                                     marginY: "1%"
                                 }}
                             >
-                                <Typography sx={{overflowWrap:"anywhere" }}>{msg.content}</Typography>
+                                <Typography sx={{overflowWrap:"anywhere",paddingInlineEnd:'1rem' }}>{msg.content}</Typography>
+                                <Typography sx={{overflowWrap:"anywhere",fontWeight:'light',fontSize:"0.7rem",alignSelf:'center',color:'#696464' }}>{formatDate(msg.timestamp,true)}</Typography>
                             </Paper>
                         ))}
                     </Box>

@@ -18,7 +18,8 @@ import CheckIcon from '@mui/icons-material/Check';
   const [text, setText] = useState('Ready');
   const [error, setError] = useState(null);
   const [success,setSuccess]=useState(false)
-
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   useEffect(()=>{
     if(success)
       setTimeout(()=>{
@@ -58,12 +59,31 @@ import CheckIcon from '@mui/icons-material/Check';
   const theme=useTheme()
   const navigate=useNavigate()
 
-  const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+  const handleEmailChange = (e) => {
+    setError(null)
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+
+    // Email validation: simple regex for checking email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      setEmailError(true);
+    } else {
+      setEmailError(false);
+    }
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
+  const handlePasswordChange = (e) => {
+    setError(null)
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+
+    // Password validation: minimum 8 characters
+    if (newPassword.length < 8) {
+      setPasswordError(true);
+    } else {
+      setPasswordError(false);
+    }
   };
 
   const handleClickShowPassword = () => {
@@ -139,6 +159,8 @@ import CheckIcon from '@mui/icons-material/Check';
             required
             fullWidth
             id="email"
+            error={emailError}
+            helperText={emailError ? "Enter Valid Email" : ""}
             label="Email Address"
             name="email"
             autoComplete="email"
@@ -150,6 +172,8 @@ import CheckIcon from '@mui/icons-material/Check';
             variant="outlined"
             margin="normal"
             required
+            error={passwordError}
+            helperText={passwordError ? "Password must be at least 8 characters" : ""}
             fullWidth
             name="password"
             label="Password"
@@ -173,12 +197,13 @@ import CheckIcon from '@mui/icons-material/Check';
             }}
           />
           <Button
-            disabled={loading}
+            disabled={loading ||emailError||passwordError}
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            sx={{ mt:3, mb: 0 }}
+            sx={{ mt:3, mb: 0,
+             }}
           >
            Continue
           </Button>  
@@ -193,7 +218,7 @@ import CheckIcon from '@mui/icons-material/Check';
        
           {error && <Alert sx={{mt:2}}  severity="error">{error}</Alert>}
           {success &&<Alert sx={{mt:2}} severity="success">Account Created Successfully</Alert>}
-          {!loading || success &&<Box sx={{textAlign:'center',cursor:'pointer',mt:1}}onClick={() => navigate('/signin')}>Already have an account? Sign in</Box>}
+          {!loading  && <Box sx={{textAlign:'center',cursor:'pointer',mt:4}}onClick={() => navigate('/signin')}>Already have an account? Sign in</Box>}
 
         </Box>
       </Box>
