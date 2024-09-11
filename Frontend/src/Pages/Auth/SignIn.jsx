@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { TextField, Button, Container, Box, Typography, IconButton, InputAdornment, Alert } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { TextField, Button, Container, Box, Typography, IconButton, InputAdornment, Alert, LinearProgress } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useTheme } from '@mui/material/styles';
@@ -13,13 +13,43 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
   const [error, setError] = useState(null);
-
+  const [loading,setLoading]=useState(false)
+  const [text,setText]=useState('Ready')
   const theme=useTheme()
   const navigate=useNavigate()
   const {login}=useAuth()
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  useEffect(() => {
+    let index = 0;
+    const messages = [
+      "Warming up the magic wand...",
+      "Summoning the digital pixies...",
+      "Polishing the stardust...",
+      "Loading the enchanted scroll...",
+      "Crafting your digital potion...",
+      "Enchanting the unicorns...",
+      "Spinning the web of awesomeness...",
+      "Summoning the tech fairies...",
+      "Fueling the rocket to adventure...",
+      "Brewing the elixir of greatness...",
+      "Aligning the cosmic stars...",
+      "Unlocking the gateway to magic...",
+      "Transforming pixels into possibilities...",
+      "A sprinkle of digital stardust...",
+      "Your adventure begins shortly..."
+    ];
+    
 
+    if (loading) {
+      const intervalId = setInterval(() => {
+        setText(messages[index]);
+        index = (index + 1) % messages.length;
+      }, 1500);
+
+      return () => clearInterval(intervalId);
+    }
+  }, [loading]);
   const handleEmailChange = (e) => {
     setError(null)
     const newEmail = e.target.value;
@@ -50,11 +80,16 @@ const SignIn = () => {
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
-
+ useEffect(()=>{
+  console.log(loading)
+ },[loading])
   const handleSubmit = async (event) => {
+    setLoading(true)
+
     event.preventDefault();
     const username=email
     const response=await signin(username,password)
+    setLoading(false)
       if(response.status===200)
        { 
           login(response.token)
@@ -101,7 +136,7 @@ const SignIn = () => {
       
       
       <Typography  fontWeight={'bold'} variant="h6">
-          Login
+          Sign In
       </Typography>
         
       <Box
@@ -160,8 +195,9 @@ const SignIn = () => {
               ),
             }}
           />
+        
           <Button
-            disabled={emailError || passwordError}
+            disabled={emailError || passwordError || loading}
             type="submit"
             fullWidth
             variant="contained"
@@ -170,8 +206,16 @@ const SignIn = () => {
           >
             Sign In
           </Button>
+          {loading &&(
+            <Box sx={{ width: '100%', textAlign: 'center', mt: 2 }}>
+              <LinearProgress />
+              <Typography variant="h6" sx={{ mt: 1 }} color='slategrey'>
+                {text}
+              </Typography>
+            </Box>
+          )}
           {error && <Alert sx={{mt:2}}  severity="error">{error}</Alert>}
-          <Box sx={{textAlign:'center',cursor:'pointer',mt:4}}onClick={() => navigate('/signup')}>Don't have an account? Create one</Box>
+          {!loading && <Box sx={{textAlign:'center',cursor:'pointer',mt:4}}onClick={() => navigate('/signup')}>Don't have an account? Create one</Box>}
 
         </Box>
       </Box>

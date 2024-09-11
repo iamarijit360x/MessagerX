@@ -3,13 +3,11 @@ import { TextField, Button, Container, Box, Typography, IconButton, InputAdornme
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useTheme } from '@mui/material/styles';
-import { useAuth } from '../../Middleware/AuthContex';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { signup } from '../../Actions/authActions';
 import LinearProgress from '@mui/material/LinearProgress';
 import Alert from '@mui/material/Alert';
-import CheckIcon from '@mui/icons-material/Check';
+import logo from '../../assets/logo.png'
  const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -118,8 +116,8 @@ import CheckIcon from '@mui/icons-material/Check';
     <Container component="main" maxWidth="xs"
       sx={{
         paddingX:2,
-        paddingY:4,
-        minHeight:'80%',
+        paddingY:7,
+        maxHeight:'80%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent:'center',
@@ -132,12 +130,11 @@ import CheckIcon from '@mui/icons-material/Check';
       }}
     >
       
-      <Typography component="h1" variant="h5" color='primary'>
-            MessengerX
-      </Typography>
+      <img src={logo} width={'100%'} />
       
-      <Typography  variant="h6">
-          Welcome to Messanger X
+      
+      <Typography  fontWeight={'bold'} variant="h6">
+          Sign Up
       </Typography>
         
       <Box

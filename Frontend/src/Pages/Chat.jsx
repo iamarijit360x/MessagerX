@@ -15,12 +15,14 @@ import {
     Box,
     InputBase,
     Fab,
+    IconButton,
 } from '@mui/material';
 import FloatingContactList from '../Components/Contacts';
 import axiosInstance from '../Middleware/axiosConfig';
 import AddtoContacts from '../Components/AddToContacts';
 import VerticalNavbar from '../Components/Navbar';
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import ContactList from '../Components/ContactList';
 const token=localStorage.getItem('token')
 let socket;
 if(token)
@@ -154,7 +156,7 @@ useEffect  (()=>{
         return () => {
             socket.off('sendMessage');
         };}
-    }, []);
+    }, [socket]);
 
     
 
@@ -291,9 +293,13 @@ const formatDate = (utcDateString,onlyTime=false) => {
             }}>
                  <Box sx={{boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)", 
                             padding: "0.5rem 2rem 0.5rem",
-                            marginBottom: "0.5rem"
+                            marginBottom: "0.5rem",
+                            display:'flex',
+                            justifyContent:"space-between",
+                            alignItems:'center'
                           }}> 
                         <Typography >Chats</Typography>
+                        <IconButton>   <ContactList  loading={loading }contacts={contacts} onSelectContact={handleSelectContacts}  /></IconButton>
                  </Box>
                
                 <Box display="flex" flexDirection="column" gap={1}  
@@ -376,11 +382,14 @@ const formatDate = (utcDateString,onlyTime=false) => {
                 minWidth:"60%",
                 
             })}}>
-                    {!bigScreen && chatBox && <Button onClick={()=>{setOpenChatBox(!chatBox)}}><ArrowBackIcon/></Button> }
+                 
                     <Box sx={{boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",padding:"0.5rem 2rem 0.5rem" }}>
-                        <Typography >{selectedContactName}</Typography>
+                        <Typography >
+                            {!bigScreen && <Button onClick={()=>{setOpenChatBox(!chatBox)}}><ArrowBackIcon/></Button>}
+                            {selectedContactName}
+                        </Typography>
                     </Box>
- 
+                   
                    {unknown && <Button><AddtoContacts username={selectedContactName}/></Button>}
                     <Box ref={boxRef} sx={{
                         overflow: 'auto', flexGrow: 1, display: "flex", flexDirection: "column", '&::-webkit-scrollbar': {
