@@ -94,13 +94,14 @@ export default function ToggleColorMode() {
            <AuthProvider> 
             <Routes>
            
-              <Route path='/' element={<WelcomePage/>}/>
+             
               <Route element={<NotProtectedRoute/>}>
+              <Route path='/' element={<SignIn/>}/>
                 <Route path='/signin' element={<SignIn />} />
                 <Route path='/signup' element={<SignUp />} />
               </Route>
               <Route element={<ProtectedRoute/>}>
-                
+              <Route path='/' element={<Chat/>}/>
                 <Route path='/dashboard' element={<Chat />} />
               </Route>
             </Routes>

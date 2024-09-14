@@ -16,7 +16,6 @@ import { useAuth } from '../Middleware/AuthContex';
 const VerticalNavbar = ({ contacts, handleSelectContacts,bigScreen }) => {
     const drawerWidthOpen = bigScreen ?240:130;  // Width when drawer is open
     const drawerWidthClosed = bigScreen?50:30;  // Width when drawer is closed
-
     const [open, setOpen] = useState(false);
     const drawerRef=useRef()
     // Function to toggle drawer open/close
@@ -202,7 +201,7 @@ const VerticalNavbar = ({ contacts, handleSelectContacts,bigScreen }) => {
                     </ListItem>
 
 
-                    <ListItem button sx={{ padding: '0' }}  onClick={()=>{localStorage.clear();naviagte('/signin')}}>
+                    <ListItem button sx={{ padding: '0' }}  onClick={()=>{logout()}}>
                         <ListItemIcon sx={{ minWidth: 'auto' }}>
                             <LogoutIcon fontSize="small" />
                         </ListItemIcon>
