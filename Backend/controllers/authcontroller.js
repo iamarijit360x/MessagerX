@@ -25,7 +25,7 @@ exports.signup= async (req,res)=>{
     
     const newUser=new User({username:username,password:password})
     await newUser.save()
-    setTimeout(()=>{return res.status(200).json({message:"Account Created Successfully"})},5000)
+    return res.status(200).json({message:"Account Created Successfully"})
    
 }
 

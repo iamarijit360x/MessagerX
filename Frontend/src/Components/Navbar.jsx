@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect, useRef } from 'react';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, IconButton } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
@@ -8,6 +8,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FloatingContactList from './Contacts';
 import LogoutIcon from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu'; // Menu icon to toggle the drawer
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Middleware/AuthContex';
 
@@ -17,17 +18,31 @@ const VerticalNavbar = ({ contacts, handleSelectContacts,bigScreen }) => {
     const drawerWidthClosed = bigScreen?50:30;  // Width when drawer is closed
 
     const [open, setOpen] = useState(false);
+    const drawerRef=useRef()
     // Function to toggle drawer open/close
     const toggleDrawer = () => {
         setOpen(!open);
     };
     const {logout}=useAuth()
-
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+          if (drawerRef.current && !drawerRef.current.contains(event.target)) {
+            setOpen(false);  // Close the drawer when clicking outside
+          }
+        };
+    
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+        };
+      }, [drawerRef]);
+    
     return (
         <>
            
 
            { bigScreen ?<Drawer
+                ref={drawerRef}
                 variant="permanent"
                 anchor="left"
                 open={open}
@@ -98,6 +113,12 @@ const VerticalNavbar = ({ contacts, handleSelectContacts,bigScreen }) => {
                        
                     </ListItem>
 
+                    <ListItem button sx={{ padding: '0 10px' }}  >
+                        <ListItemIcon sx={{ minWidth: 'auto' }}>
+                            <SettingsIcon fontSize="medium" />
+                        </ListItemIcon>
+                        {open && <ListItemText primary="Settings" sx={{ paddingLeft: 2 }} />}
+                    </ListItem>
 
                     <ListItem button sx={{ padding: '0 10px' }}  onClick={logout}>
                         <ListItemIcon sx={{ minWidth: 'auto' }}>

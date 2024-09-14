@@ -5,7 +5,6 @@ const jwt=require('jsonwebtoken')
 
 exports.addtocontacts= async (req,res)=>{
     const {username,name}=req.body;
-    console.log(username,name)
     const user=await User.findOne({username:username})
     if(!user)
         return res.status(204).json({sucess:false,message:"User not found"})
@@ -18,8 +17,11 @@ exports.addtocontacts= async (req,res)=>{
     const contact = { username: username, name: name };
     const contactAlreadyExists=currentUser.contacts.find((item)=>item.username==contact.username)
     if(contactAlreadyExists)
+     {
+        console.error('Contact Already Exists')
         return res.status(202).json({message: 'Contact Already Exists'});
 
+     } 
 
     currentUser.contacts.push(contact);
     await currentUser.save();

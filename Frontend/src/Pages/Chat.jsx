@@ -16,6 +16,8 @@ import {
     InputBase,
     Fab,
     IconButton,
+    LinearProgress,
+    Skeleton,
 } from '@mui/material';
 import FloatingContactList from '../Components/Contacts';
 import axiosInstance from '../Middleware/axiosConfig';
@@ -292,14 +294,14 @@ const formatDate = (utcDateString,onlyTime=false) => {
             width:'98%'
             }}>
                  <Box sx={{boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)", 
-                            padding: "0.5rem 2rem 0.5rem",
+                            padding: "0rem 2rem 0rem",
                             marginBottom: "0.5rem",
                             display:'flex',
                             justifyContent:"space-between",
                             alignItems:'center'
                           }}> 
                         <Typography >Chats</Typography>
-                        <IconButton>   <ContactList  loading={loading }contacts={contacts} onSelectContact={handleSelectContacts}  /></IconButton>
+                        <IconButton>   <ContactList  loading={loading } contactsList={contacts} onSelectContact={handleSelectContacts} onContactsChange={(data)=>{setContacts(data);console.log(data)}} /></IconButton>
                  </Box>
                
                 <Box display="flex" flexDirection="column" gap={1}  
@@ -318,7 +320,17 @@ const formatDate = (utcDateString,onlyTime=false) => {
             }, ...(bigScreen && {
                 minWidth:"60%"
             })}}>
-                    {!loading && Object.keys(messages).map((item,index)=>(
+                    {loading? 
+                    Array.from({ length: 12 }).map((_, index) => (
+                        <Skeleton
+                        key={index}
+                        variant="rectangular"
+                        width={'100%'}
+                        height={45}
+                        sx={{ marginBlockEnd: '5px' }}
+                        />
+                    ))
+                    : Object.keys(messages).map((item,index)=>(
                         
                         <Paper
                          onClick={()=> handleSelectContactsByUsername(item)} 
@@ -383,8 +395,8 @@ const formatDate = (utcDateString,onlyTime=false) => {
                 
             })}}>
                  
-                    <Box sx={{boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",padding:"0.5rem 2rem 0.5rem" }}>
-                        <Typography >
+                    <Box sx={{boxShadow:"0 4px 8px rgba(0, 0, 0, 0.1)",         padding: "1rem 2rem 1rem", }}>
+                        <Typography sx={{fontWeight:'bold'}}>
                             {!bigScreen && <Button onClick={()=>{setOpenChatBox(!chatBox)}}><ArrowBackIcon/></Button>}
                             {selectedContactName}
                         </Typography>
@@ -410,13 +422,12 @@ const formatDate = (utcDateString,onlyTime=false) => {
                             <Paper
                                 key={index}
                                 sx={{
-                                    margin:"0 1.5rem 0 1.5rem",
+                                    margin:"0.5rem 1.5rem 0 1.5rem",
                                     display: "flex",
                                     maxWidth: "70%",
                                     padding: '0.5% 1% 0.5% 1%',
                                     backgroundColor: msg.user === username ? "#f8dbec" : "lightblue", // Adjusted background color conditionally
-                                    alignSelf: msg.user === username ? "start" : "end", // Adjusted textAlign,
-                                    marginY: "1%"
+                                    alignSelf: msg.user === username ? "end" : "start", // Adjusted textAlign,
                                 }}
                             >
                                 <Typography sx={{overflowWrap:"anywhere",paddingInlineEnd:'1rem' }}>{msg.content}</Typography>
@@ -447,6 +458,9 @@ const formatDate = (utcDateString,onlyTime=false) => {
                     >
                     <Typography variant="h6" align="center">
                         Hello, Welcome to MessengerX
+                        {loading && 
+                            <><LinearProgress /><Typography>Hold Tight Your Messeages are Loading</Typography></>
+                        }
                     </Typography>
                 </Box>
   
