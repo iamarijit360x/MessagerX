@@ -19,9 +19,10 @@ import CloseIcon from '@mui/icons-material/Close';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import AddtoContacts from './AddToContacts';
-const ContactList = ({ contactsList, onSelectContact,loading,onContactsChange }) => {
+const ContactList = ({ contactsList, bigScreen,onSelectContact,loading,onContactsChange }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [contacts,setContacts]=useState(contactsList)
+
   useEffect(()=>console.log(contacts),[contacts])
   useEffect(() => {
     // Update contacts when contactsList changes
@@ -55,7 +56,7 @@ const ContactList = ({ contactsList, onSelectContact,loading,onContactsChange })
             width: 500, // Set width
             right:'100%',
             '& .MuiMenu-paper': {
-              width: '100%', // Custom width for the Menu
+              width:bigScreen?'100%':'60%', // Custom width for the Menu
               paddingX:"2rem",
               paddingY:'1rem',
               borderRadius:'2%'

@@ -301,7 +301,7 @@ const formatDate = (utcDateString,onlyTime=false) => {
                             alignItems:'center'
                           }}> 
                         <Typography >Chats</Typography>
-                        <IconButton>   <ContactList  loading={loading } contactsList={contacts} onSelectContact={handleSelectContacts} onContactsChange={(data)=>{setContacts(data);console.log(data)}} /></IconButton>
+                        <IconButton>   <ContactList  bigScreen={bigScreen} loading={loading } contactsList={contacts} onSelectContact={handleSelectContacts} onContactsChange={(data)=>{setContacts(data);console.log(data)}} /></IconButton>
                  </Box>
                
                 <Box display="flex" flexDirection="column" gap={1}  
